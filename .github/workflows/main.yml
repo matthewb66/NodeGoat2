@@ -48,7 +48,23 @@ jobs:
         sarif: blackduck-sarif.json
       env:
         GITHUB_TOKEN: ${{ github.token }}
-          
+
+    # Runs special workflow steps for pull requests
+    - name: Run RAPID Black Duck security scan
+      if: ${{github.event_name == 'push'}}
+      uses: matthewb66/blackduck-scan-action@v14
+      with:
+        url: ${{ secrets.BLACKDUCK_URL }}
+        token: ${{ secrets.BLACKDUCK_API_TOKEN }}
+        fix_pr: true
+        comment_on_pr: false
+        upgrade_major: true
+        upgrade_indirect: true
+        output: blackduck-output
+        sarif: blackduck-sarif.json
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+
 #     - name: Upload SARIF file
 #  #     if: ${{github.event_name == 'pull_request'}}
 #       uses: github/codeql-action/upload-sarif@v1
